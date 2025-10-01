@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Tier App - Frontend</title>
+<meta charset="UTF-8">
+<title>Power Frontend</title>
+<style>
+body { font-family: Arial; text-align: center; margin-top: 50px; }
+button { padding: 10px 20px; font-size: 16px; }
+#output { margin-top: 20px; font-size: 18px; color: green; }
+</style>
 </head>
 <body>
-    <h1>Welcome to the Frontend!</h1>
-    <p>This is served by Nginx in a Docker container running on MicroK8s.</p>
-    <a href="http://localhost:30081">Go to Backend</a>
+<h1>Welcome to Power Frontend</h1>
+<button onclick="fetchData()">Fetch Backend Data</button>
+<div id="output"></div>
+<script>
+async function fetchData() {
+    try {
+        const response = await fetch("http://backend-service:5000/api/data");
+        const data = await response.json();
+        document.getElementById("output").innerText =
+            `Status: ${data.status}, Value: ${data.value}, Message: ${data.message}`;
+    } catch (err) {
+        document.getElementById("output").innerText = "Error fetching backend!";
+    }
+}
+</script>
 </body>
 </html>
