@@ -7,20 +7,21 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Build and Push Docker Images') {
             steps {
-                checkout scm // will checkout your main branch
-            }
-        }
+                script {
+                    // Use build number as image tag
+                    IMAGE_TAG = "${env.BUILD_NUMBER}"
 
-        stage('Build Docker Images') {
-            steps {
-                sh """
-                docker build -t $REGISTRY/frontend:latest ./frontend
-                docker build -t $REGISTRY/backend:latest ./backend
-                docker push $REGISTRY/frontend:latest
-                docker push $REGISTRY/backend:latest
-                """
+                    sh "docker build -t $REGISTRY/frontend:$IMAGE_TAG ./frontend"
+                    sh "docker build -t $REGISTRY/backend:$IMAGE_TAG ./backend"
+                    sh "docker push $REGISTRY/frontend:$IMAGE_TAG"
+                    sh "docker push $REGISTRY/backend:$IMAGE_TAG"
+
+                    // Update deployments with new image
+                    sh "microk8s kubectl set image deployment/frontend-deployment frontend=$REGISTRY/frontend:$IMAGE_TAG -n $NAMESPACE"
+                    sh "microk8s kubectl set image deployment/backend-deployment backend=$REGISTRY/backend:$IMAGE_TAG -n $NAMESPACE"
+                }
             }
         }
 
