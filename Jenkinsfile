@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/rohitsolanki1/multi-tier-app.git'
+                git 'https://github.com/rohitsolanki1/multi_tier_web_app.git'
             }
         }
         stage('Build Docker Images') {

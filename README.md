@@ -91,6 +91,23 @@ microk8s kubectl get svc
 * Backend URL: `http://<ubuntu-ip>:30081` (optional)
 
 **6. Jenkins CI/CD Pipeline**
+
+Create a Pipeline Project
+
+Jenkins Dashboard → New Item → Pipeline → OK
+
+Pipeline configuration:
+
+Definition: Pipeline script from SCM
+
+SCM: Git
+
+Repository URL: https://github.com/rohitsolanki1/multi_tier_web_app.git
+
+Branch: main (or your branch)
+
+Script Path: Jenkinsfile
+
 Use the following Jenkinsfile in your repo to automate builds and deployments:
 
 ```groovy
@@ -98,7 +115,7 @@ pipeline {
     agent any
     stages {
         stage('Clone Repo') {
-            steps { git 'https://github.com/<your-username>/multi-tier-app.git' }
+            steps { git 'https://github.com/rohitsolanki1/multi_tier_web_app.git' }
         }
         stage('Build Docker Images') {
             steps {
@@ -135,7 +152,7 @@ Triggers can be set to poll GitHub every minute or use webhooks.
 
 ## References
 
-* GitHub Repo: `https://github.com/<your-username>/multi-tier-app`
+* GitHub Repo: `https://github.com/rohitsolanki1/multi_tier_web_app.git`
 * MicroK8s Docs: [https://microk8s.io/docs](https://microk8s.io/docs)
 * Jenkins Docs: [https://www.jenkins.io/doc/](https://www.jenkins.io/doc/)
 
