@@ -1,25 +1,35 @@
 pipeline {
     agent any
 
+    environment {
+        REGISTRY = "localhost:32000"
+        NAMESPACE = "multi-tier-web-app"
+    }
+
     stages {
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/rohitsolanki1/multi_tier_web_app.git'
+                checkout scm // will checkout your main branch
             }
         }
+
         stage('Build Docker Images') {
             steps {
-                sh 'docker build -t frontend:latest ./frontend'
-                sh 'docker build -t backend:latest ./backend'
-                sh 'docker tag frontend localhost:32000/frontend:latest'
-                sh 'docker tag backend localhost:32000/backend:latest'
-                sh 'docker push localhost:32000/frontend:latest'
-                sh 'docker push localhost:32000/backend:latest'
+                sh """
+                docker build -t $REGISTRY/frontend:latest ./frontend
+                docker build -t $REGISTRY/backend:latest ./backend
+                docker push $REGISTRY/frontend:latest
+                docker push $REGISTRY/backend:latest
+                """
             }
         }
+
         stage('Deploy to MicroK8s') {
             steps {
-                sh 'microk8s kubectl apply -f k8s/'
+                sh """
+                microk8s kubectl create namespace $NAMESPACE --dry-run=client -o yaml | microk8s kubectl apply -f -
+                microk8s kubectl apply -f k8s/ -n $NAMESPACE
+                """
             }
         }
     }
