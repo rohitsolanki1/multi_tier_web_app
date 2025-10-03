@@ -16,7 +16,7 @@ button { padding: 10px 20px; font-size: 16px; }
 <script>
 async function fetchData() {
     try {
-        const response = await fetch("http://backend-service:5000/api/data");
+        const response = await fetch("http://172.17.10.133:31423/api/data");
         const data = await response.json();
         document.getElementById("output").innerText =
             `Status: ${data.status}, Value: ${data.value}, Message: ${data.message}`;
