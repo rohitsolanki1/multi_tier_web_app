@@ -15,8 +15,19 @@ button { padding: 10px 20px; font-size: 16px; }
 <div id="output"></div>
 <script>
 async function fetchData() {
+    let backendUrl;
+
+    // Detect if running inside Kubernetes (simple check: "backend-service" resolves in cluster DNS)
     try {
-        const response = await fetch("http://172.17.10.133:31423/api/data");
+        const test = await fetch("http://backend-service:5000/api/data", { method: "HEAD" });
+        backendUrl = "http://backend-service:5000/api/data";
+    } catch (err) {
+        // Fallback for browser/host access
+        backendUrl = "http://172.17.10.133:31423/api/data"; // replace with your Node IP
+    }
+
+    try {
+        const response = await fetch(backendUrl);
         const data = await response.json();
         document.getElementById("output").innerText =
             `Status: ${data.status}, Value: ${data.value}, Message: ${data.message}`;

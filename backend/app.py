@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import random
 import time
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Simulate some dynamic data
 @app.route("/api/data")
