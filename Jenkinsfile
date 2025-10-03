@@ -30,8 +30,17 @@ pipeline {
                 sh """
                 microk8s kubectl create namespace $NAMESPACE --dry-run=client -o yaml | microk8s kubectl apply -f -
                 microk8s kubectl apply -f k8s/ -n $NAMESPACE
+
+                # Update deployments after applying YAML
+                microk8s kubectl set image deployment/frontend-deployment frontend=$REGISTRY/frontend:$IMAGE_TAG -n $NAMESPACE
+                microk8s kubectl set image deployment/backend-deployment backend=$REGISTRY/backend:$IMAGE_TAG -n $NAMESPACE
+
+                # Wait for rollout to complete
+                microk8s kubectl rollout status deployment/frontend-deployment -n $NAMESPACE
+                microk8s kubectl rollout status deployment/backend-deployment -n $NAMESPACE
                 """
             }
         }
+
     }
 }
